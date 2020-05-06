@@ -4,4 +4,6 @@ video, canvas, img { max-width: 100%; }
     display: flex;
     flex-direction: column;
   }
-  
+.imageSource{
+  display: none;
+}

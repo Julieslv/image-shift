@@ -76,8 +76,8 @@ const animate = () => {
 	directionX === 'up' ? x++ : x--;
 	console.log(`x after up: ${x}`);
 	ctx.drawImage(RGB.red, x, y);
-	ctx.drawImage(RGB.green, 10, 10);
-	ctx.drawImage(RGB.blue, 20, 20);
+	ctx.drawImage(RGB.green, x + 20, y + 30);
+	ctx.drawImage(RGB.blue, x - 20, y - 20);
 	// x < 30 ? x++ : x--;
 	// x = 0;
 	ctx.restore();
@@ -85,8 +85,8 @@ const animate = () => {
 
 const animateInterval = setInterval(animate, 30);
 
-ctx.drawImage(RGB.red, 0, 0);
+/* ctx.drawImage(RGB.red, 0, 0);
 ctx.drawImage(RGB.green, 10, 10);
-ctx.drawImage(RGB.blue, 20, 20);
+ctx.drawImage(RGB.blue, 20, 20); */
 
 output.append(recombined);

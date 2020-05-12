@@ -7,3 +7,6 @@ video, canvas, img { max-width: 100%; }
 .imageSource{
   display: none;
 }
+.output{
+  filter: hue-rotate(25deg);
+}

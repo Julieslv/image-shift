@@ -1,10 +1,10 @@
 const copyToCanvas = image => {
-	const can = document.createElement('canvas');
-	can.width = image.naturalWidth || image.width;
-	can.height = image.naturalHeight || image.height;
-	can.ctx = can.getContext('2d');
-	can.ctx.drawImage(image, 0, 0);
-	return can;
+	const canvas = document.createElement('canvas');
+	canvas.width = image.naturalWidth || image.width;
+	canvas.height = image.naturalHeight || image.height;
+	canvas.ctx = canvas.getContext('2d');
+	canvas.ctx.drawImage(image, 0, 0);
+	return canvas;
 };
 
 const getNewChannelData = (channelName, data) => {
@@ -33,7 +33,7 @@ const getChannel = (channelName, image) => {
 	return copy;
 };
 
-const seperateRGB = image => {
+const channels = image => {
 	return {
 		red: getChannel('red', image),
 		green: getChannel('green', image),
@@ -42,51 +42,44 @@ const seperateRGB = image => {
 };
 
 const createCanvas = (w, h) => {
-	const can = document.createElement('canvas');
-	can.width = w;
-	can.height = h;
-	can.ctx = can.getContext('2d');
-	return can;
+	const canvas = document.createElement('canvas');
+	canvas.width = w;
+	canvas.height = h;
+	canvas.ctx = canvas.getContext('2d');
+	return canvas;
 };
 
 const image = document.querySelector('#source-image');
 const output = document.querySelector('.output');
 
-const RGB = seperateRGB(image);
+const RGB = channels(image);
 const recombined = createCanvas(RGB.red.width, RGB.red.height);
 const ctx = recombined.ctx;
 const w = ctx.canvas.width;
 const h = ctx.canvas.height;
 let y = 0;
-let x = 10;
+let x = 0;
 let directionY = 'up';
 let directionX = 'up';
+
+const animateChannel = (channelName, x, y, delay) => {};
 ctx.globalCompositeOperation = 'screen';
 
 const animate = () => {
+	requestAnimationFrame(animate);
 	ctx.save();
 	ctx.clearRect(0, 0, w, h);
 	// Draw here
-	console.log(`x: ${x}`);
-	// console.log(`y: ${y}`);
-	directionY = y === 40 ? 'down' : y === 0 ? 'up' : directionY;
-	directionX = x === 20 ? 'down' : x === 0 ? 'up' : directionX;
-	console.log(directionX);
+	directionY = y === 10 ? 'down' : y === -10 ? 'up' : directionY;
+	directionX = x === 10 ? 'down' : x === -10 ? 'up' : directionX;
 	directionY === 'up' ? y++ : y--;
 	directionX === 'up' ? x++ : x--;
-	console.log(`x after up: ${x}`);
-	ctx.drawImage(RGB.red, x, y);
-	ctx.drawImage(RGB.green, x + 20, y + 30);
-	ctx.drawImage(RGB.blue, x - 20, y - 20);
-	// x < 30 ? x++ : x--;
-	// x = 0;
+
+	ctx.drawImage(RGB.red, Math.floor(x * Math.random()), y);
+	ctx.drawImage(RGB.green, x, Math.floor(y * Math.random()));
+	ctx.drawImage(RGB.blue, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
 	ctx.restore();
 };
-
-const animateInterval = setInterval(animate, 30);
-
-/* ctx.drawImage(RGB.red, 0, 0);
-ctx.drawImage(RGB.green, 10, 10);
-ctx.drawImage(RGB.blue, 20, 20); */
+animate();
 
 output.append(recombined);

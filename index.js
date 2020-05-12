@@ -43,8 +43,8 @@ const channels = image => {
 
 const createCanvas = (w, h) => {
 	const canvas = document.createElement('canvas');
-	canvas.width = w;
-	canvas.height = h;
+	canvas.width = w - 6;
+	canvas.height = h - 6;
 	canvas.ctx = canvas.getContext('2d');
 	return canvas;
 };
@@ -53,33 +53,53 @@ const image = document.querySelector('#source-image');
 const output = document.querySelector('.output');
 
 const RGB = channels(image);
-const recombined = createCanvas(RGB.red.width, RGB.red.height);
-const ctx = recombined.ctx;
+const newCanvas = createCanvas(RGB.red.width, RGB.red.height);
+output.append(newCanvas);
+
+const ctx = newCanvas.ctx;
 const w = ctx.canvas.width;
 const h = ctx.canvas.height;
-let y = 0;
-let x = 0;
-let directionY = 'up';
-let directionX = 'up';
 
 const animateChannel = (channelName, x, y, delay) => {};
 ctx.globalCompositeOperation = 'screen';
 
+let fps, fpsInterval, startTime, now, then, elapsed;
+
 const animate = () => {
+	// calc elapsed time since last loop
+	now = Date.now();
+	elapsed = now - then;
+	// if enough time has elapsed, draw the next frame
+	if (elapsed > fpsInterval) {
+		// Get ready for next frame by setting then=now, but...
+		// Also, adjust for fpsInterval not being multiple of 16.67
+		then = now - elapsed % fpsInterval;
+		// draw stuff here
+		ctx.save();
+		ctx.clearRect(0, 0, w, h);
+
+		let angle = 0;
+		let cx = 6;
+		let cy = 6;
+		let radius = 3;
+
+		angle += 1;
+
+		let x = cx + radius * Math.cos(angle);
+		let y = cy + radius * Math.sin(angle);
+
+		ctx.drawImage(RGB.red, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
+		ctx.drawImage(RGB.green, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
+		ctx.drawImage(RGB.blue, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
+		ctx.restore();
+	}
 	requestAnimationFrame(animate);
-	ctx.save();
-	ctx.clearRect(0, 0, w, h);
-	// Draw here
-	directionY = y === 10 ? 'down' : y === -10 ? 'up' : directionY;
-	directionX = x === 10 ? 'down' : x === -10 ? 'up' : directionX;
-	directionY === 'up' ? y++ : y--;
-	directionX === 'up' ? x++ : x--;
-
-	ctx.drawImage(RGB.red, Math.floor(x * Math.random()), y);
-	ctx.drawImage(RGB.green, x, Math.floor(y * Math.random()));
-	ctx.drawImage(RGB.blue, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
-	ctx.restore();
 };
-animate();
+const startAnimating = fps => {
+	fpsInterval = 1000 / fps;
+	then = Date.now();
+	startTime = then;
+	animate();
+};
 
-output.append(recombined);
+startAnimating(8);

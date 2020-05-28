@@ -52,54 +52,64 @@ const createCanvas = (w, h) => {
 const image = document.querySelector('#source-image');
 const output = document.querySelector('.output');
 
-const RGB = channels(image);
-const newCanvas = createCanvas(RGB.red.width, RGB.red.height);
-output.append(newCanvas);
+function loaded() {
+	const RGB = channels(image);
+	const newCanvas = createCanvas(RGB.red.width, RGB.red.height);
+	output.append(newCanvas);
 
-const ctx = newCanvas.ctx;
-const w = ctx.canvas.width;
-const h = ctx.canvas.height;
+	const ctx = newCanvas.ctx;
+	const w = ctx.canvas.width;
+	const h = ctx.canvas.height;
 
-const animateChannel = (channelName, x, y, delay) => {};
-ctx.globalCompositeOperation = 'screen';
+	ctx.globalCompositeOperation = 'screen';
 
-let fps, fpsInterval, startTime, now, then, elapsed;
+	let fps, fpsInterval, startTime, now, then, elapsed;
 
-const animate = () => {
-	// calc elapsed time since last loop
-	now = Date.now();
-	elapsed = now - then;
-	// if enough time has elapsed, draw the next frame
-	if (elapsed > fpsInterval) {
-		// Get ready for next frame by setting then=now, but...
-		// Also, adjust for fpsInterval not being multiple of 16.67
-		then = now - elapsed % fpsInterval;
-		// draw stuff here
-		ctx.save();
-		ctx.clearRect(0, 0, w, h);
+	const animate = () => {
+		// calc elapsed time since last loop
+		now = Date.now();
+		elapsed = now - then;
+		// if enough time has elapsed, draw the next frame
+		if (elapsed > fpsInterval) {
+			// Get ready for next frame by setting then=now, but...
+			// Also, adjust for fpsInterval not being multiple of 16.67
+			then = now - elapsed % fpsInterval;
+			// draw stuff here
+			ctx.save();
+			ctx.clearRect(0, 0, w, h);
 
-		let angle = 0;
-		let cx = 6;
-		let cy = 6;
-		let radius = 3;
+			let angle = 0;
+			let cx = 6;
+			let cy = 6;
+			let radius = 3;
 
-		angle += 1;
+			angle += 1;
 
-		let x = cx + radius * Math.cos(angle);
-		let y = cy + radius * Math.sin(angle);
+			let x = cx + radius * Math.cos(angle);
+			let y = cy + radius * Math.sin(angle);
 
-		ctx.drawImage(RGB.red, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
-		ctx.drawImage(RGB.green, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
-		ctx.drawImage(RGB.blue, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
-		ctx.restore();
-	}
-	requestAnimationFrame(animate);
-};
-const startAnimating = fps => {
-	fpsInterval = 1000 / fps;
-	then = Date.now();
-	startTime = then;
-	animate();
-};
+			ctx.drawImage(RGB.red, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
+			ctx.drawImage(RGB.green, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
+			ctx.drawImage(RGB.blue, Math.floor(x * Math.random()), Math.floor(y * Math.random()));
+			ctx.restore();
+		}
+		requestAnimationFrame(animate);
+	};
+	const startAnimating = fps => {
+		fpsInterval = 1000 / fps;
+		then = Date.now();
+		startTime = then;
+		animate();
+	};
 
-startAnimating(8);
+	startAnimating(8);
+}
+
+if (image.complete) {
+	loaded();
+} else {
+	image.addEventListener('load', loaded);
+	image.addEventListener('error', function() {
+		alert('Error, image could not be loaded');
+	});
+}

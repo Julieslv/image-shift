@@ -2,7 +2,7 @@
 This is a small experiment to shift RGBA channels using canvas.
 
 ## Demo
-Demo can be found on my site [http://play.juliestephanie.com/](https://play.juliestephanie.com/)
+Demo can be found on my site [https://play.juliestephanie.com/](https://play.juliestephanie.com/)
 
 ## Credits
 help from [Blindman67 on stackexchange](https://stackoverflow.com/questions/60937639/canvas-splitting-image-into-rgba-components);
